@@ -10,6 +10,15 @@ Vue.use(VueRouter)
 const Home = { template: '<div>home</div>' }
 const Foo = { template: '<div>foo</div>' }
 const Bar = { template: '<div>bar</div>' }
+const Foobar = {
+  template: `
+    <div>
+      <p>prop: {{fooParam}}</p>
+      <p>params: {{$route.params}}</p>
+    </div>'
+  `,
+  props: ['fooParam']
+}
 
 // 3. Create the router
 const router = new VueRouter({
@@ -18,7 +27,8 @@ const router = new VueRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/foo', component: Foo },
-    { path: '/bar', component: Bar }
+    { path: '/bar', component: Bar },
+    { path: '/foobar/:fooParam?', component: Foobar, props: true }
   ]
 })
 
@@ -26,6 +36,12 @@ const router = new VueRouter({
 // Make sure to inject the router.
 // Route components will be rendered inside <router-view>.
 new Vue({
+  mounted() {
+    setTimeout(() => {
+      alert('Navigating to `/foobar` with params')
+      this.$router.push({ path: '/foobar', params: { fooParam: 'FooBar' } });
+    }, 2000);
+  },
   router,
   template: `
     <div id="app">
@@ -37,6 +53,7 @@ new Vue({
         <router-link tag="li" to="/bar" :event="['mousedown', 'touchstart']">
           <a>/bar</a>
         </router-link>
+        <li><router-link to="/foobar/someParameterValue">/foobar/someParameterValue</router-link></li>
       </ul>
       <router-view class="view"></router-view>
     </div>
